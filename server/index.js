@@ -1,7 +1,7 @@
 import express from "express";
 import logger from "morgan";
 import { Server } from "socket.io";
-import { createServer } from "http"; // Cambié esto para que `http` sea usado directamente
+import { createServer } from "http";
 import dotenv from 'dotenv';
 import { createClient } from "@libsql/client";
 
@@ -10,15 +10,15 @@ dotenv.config();
 const port = process.env.PORT ?? 3000;
 
 const app = express();
-const server = createServer(app); // Creamos el servidor HTTP de Express
+const server = createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5174", // El puerto donde corre Remix durante el desarrollo
+    origin: "http://localhost:5174",
     methods: ["GET", "POST"],
   },
   connectionStateRecovery: {
-    maxDisconnectionDuration: 60000, // 60 segundos para recuperación de estado
+    maxDisconnectionDuration: 60000,
   },
 });
 
@@ -42,7 +42,6 @@ io.on('connection', async (socket) => {
     console.log('Disconnected!');
   });
 
-  // Escuchar los mensajes del cliente
   socket.on('chat message', async (msg) => {
     let result;
     console.log('userInformation ' + socket.handshake.auth.username);
@@ -78,7 +77,6 @@ io.on('connection', async (socket) => {
 
 app.use(logger('dev'));
 
-// Servir archivos estáticos de Remix
 app.all('*', (req, res) => {
   res.sendFile(process.cwd() + '/client/index.html');
 });
